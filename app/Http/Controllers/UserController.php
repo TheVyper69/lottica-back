@@ -77,4 +77,10 @@ class UserController extends Controller
     }
 
 
+    public function tiempo(Request $request){
+        $usuario = DB::select("SELECT * FROM tiempo");
+        return response()->json($usuario, 200);
+    }
+
+
 }
