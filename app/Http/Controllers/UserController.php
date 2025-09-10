@@ -10,33 +10,39 @@ use Illuminate\Support\Facades\DB;
 class UserController extends Controller
 {
 
-    public function registroUser(Request $request){
+    public function todo(Request $request){
+        $usuario = DB::select("SELECT * FROM ophthalmologists");
+        return response()->json($usuario, 200);
+    }
+    public function registroOftalmologo(Request $request){
 
         $request->validate([
-            'nombre'=>'required',
-            'telefono'=>'required',
-            'correo'=>'email|required',
-            'contrasena'=>'confirmed|required'
+            'name'=>'required',
+            'email'=>'email|required',
+            'license_number'=>'required',
+            'phone'=>'required',
+            'password'=>'confirmed|required'
         ]);
 
-        $idRol= 7;
+        // $idRol= 7;
 
-        $correo = $request->correo;
-        $usuarioEmail = DB::table('users')
-                            ->where('correo', $correo)
+        $correo = $request->email;
+        $usuarioEmail = DB::table('ophthalmologists')
+                            ->where('email', $correo)
                             ->count();
         if($usuarioEmail == 1){
             return response()->json(['message' => 'Este correo esta registrado'], 233);
             
         }else{
             $usuario = new User;
-            $usuario->id_rol = $idRol;            
-            $usuario->nombre = $request->nombre;
-            $usuario->telefono = $request->telefono;
-            $usuario->correo = $request->correo;
-            $usuario->contrasena = sha1($request->contrasena);
+            $usuario->name = $request->name;
+            $usuario->email = $request->email;
+            $usuario->phone = $request->phone;
+            $usuario->license_number = $request->license_number;
+            $usuario->password = sha1($request->contrasena);
             $result = $usuario->save();
-            return $result;
+            return response()->json(['message' => 'registro completado'], 200);
+            
         }
 
     }

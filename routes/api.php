@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ClientsController;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,8 +20,15 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('registro', [UserController::class, 'registroUser']);
+Route::post('registro', [UserController::class, 'registroOftalmologo']);
 Route::post('login', [UserController::class, 'login']);
 Route::post('sesion', [UserController::class, 'sesion']);
-Route::get('tiempo', [UserController::class, 'tiempo']);
+Route::get('todo', [UserController::class, 'todo']);
+
+//CLIENTES
+Route::post('registroClients', [ClientsController::class, 'registroClients']);
+Route::get('allClients', [ClientsController::class, 'allClients']);
+Route::get('allClients/{id}',   [ClientsController::class, 'showClient']);
+
+
 
