@@ -29,6 +29,7 @@ Route::get('todo', [UserController::class, 'todo']);
 Route::post('registroClients', [ClientsController::class, 'registroClients']);
 Route::get('allClients', [ClientsController::class, 'allClients']);
 Route::get('allClients/{id}',   [ClientsController::class, 'showClient']);
+Route::delete('delete/{id}', [ClientsController::class, 'destroy']);
 
 
 
