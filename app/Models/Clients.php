@@ -14,14 +14,12 @@ class Clients extends Model
     use SoftDeletes;
 
     protected $fillable = [
-        'first_name',
-        'last_name',
-        'age',
-        'email',
-        'phone',
-        'address',
-        'birthdate',
-        'gender',
-        'occupation',
+        'first_name','last_name','age','email','phone',
+        'address','birthdate','gender','occupation',
+    ];
+    protected $casts = [
+        'age'       => 'integer',
+        'gender'    => 'integer',
+        'birthdate' => 'date:Y-m-d',
     ];
 }
