@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientsController;
+use App\Http\Controllers\ProductController;
 
 /*
 |--------------------------------------------------------------------------
@@ -31,6 +32,14 @@ Route::get('allClients', [ClientsController::class, 'allClients']);
 Route::get('allClients/{id}',   [ClientsController::class, 'showClient']);
 Route::delete('delete/{id}', [ClientsController::class, 'destroy']);
 Route::put('updateClient/{id}', [ClientsController::class, 'update']);
+
+//product
+Route::post('registroPruduct', [ProductController::class, 'store']);
+Route::get('showBrand', [ProductController::class, 'showBrand']);
+Route::get('showCategoria', [ProductController::class, 'showCategoria']);
+
+
+
 
 
 
