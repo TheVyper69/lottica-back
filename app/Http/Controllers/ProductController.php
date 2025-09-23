@@ -162,6 +162,7 @@ class ProductController extends Controller
 
         return response()->json(['message' => 'Producto eliminado'], 200);
     }
+    
 
     /**
      * (Opcional) Restaurar un producto soft-deleted
@@ -199,4 +200,23 @@ class ProductController extends Controller
         $usuarios = DB::select("SELECT * FROM categoria");
         return response()->json($usuarios, 200);
     }
+
+    public function allProducts(Request $request)
+    {
+        $usuarios = DB::select("SELECT p.id, p.name, c.name AS category_name, b.name AS brand_name, p.price, p.stock, p.date_added, p.SN, p.created_at, p.updated_at FROM products AS p LEFT JOIN categoria AS c ON c.id = p.category LEFT JOIN brand AS b ON b.id = p.brand WHERE p.deleted_at IS NULL;");
+        return response()->json($usuarios, 200);
+    }
+    public function showProduct($id)
+        {
+            // Solo clientes que NO están eliminados (deleted_at = null)
+            $o = Product::whereNull('deleted_at')->find($id);
+
+            if (!$o) {
+                return response()->json(['message' => 'No encontrado'], 404);
+            }
+
+            return response()->json($o, 200);
+        }
+
+    
 }

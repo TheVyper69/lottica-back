@@ -37,6 +37,11 @@ Route::put('updateClient/{id}', [ClientsController::class, 'update']);
 Route::post('registroPruduct', [ProductController::class, 'store']);
 Route::get('showBrand', [ProductController::class, 'showBrand']);
 Route::get('showCategoria', [ProductController::class, 'showCategoria']);
+Route::get('allProducts', [ProductController::class, 'allProducts']);
+Route::delete('deleteProduct/{id}', [ProductController::class, 'destroy']);
+Route::get('showProduct/{id}',   [ProductController::class, 'showProduct']);
+
+
 
 
 
