@@ -19,8 +19,8 @@ class UserController extends Controller
         $request->validate([
             'name'=>'required',
             'email'=>'email|required',
-            'license_number'=>'required',
             'phone'=>'required',
+            'license_number'=>'required',
             'password'=>'confirmed|required'
         ]);
 
@@ -34,13 +34,16 @@ class UserController extends Controller
             return response()->json(['message' => 'Este correo esta registrado'], 233);
             
         }else{
-            $usuario = new User;
-            $usuario->name = $request->name;
-            $usuario->email = $request->email;
-            $usuario->phone = $request->phone;
-            $usuario->license_number = $request->license_number;
-            $usuario->password = sha1($request->contrasena);
-            $result = $usuario->save();
+            // $usuario = new User;
+            // $usuario->name = $request->name;
+            // $usuario->email = $request->email;
+            // $usuario->phone = $request->phone;
+            // $usuario->license_number = $request->license_number;
+            // $usuario->password = sha1($request->password);
+            // $result = $usuario->save();
+            $pass = sha1($request->password);
+            $usuario2 = DB::select("INSERT INTO ophthalmologists (name, email, phone, license_number, password) VALUES 
+            ('$request->name', '$request->email', '$request->phone', '$request->license_number', '$pass')");
             return response()->json(['message' => 'registro completado'], 200);
             
         }
@@ -49,12 +52,18 @@ class UserController extends Controller
 
     public function login(Request $request){
        
+        
+        $request->validate([
+            'name'=>'required',
+            'contrasena'=>'required'
+        ]);
         $pass = sha1($request->contrasena);
+                    
 
-        $usuario =  DB::select("SELECT id, nombre FROM users where nombre ='$request->nombre' OR telefono = '$request->nombre' OR correo = '$request->nombre'");
+        $usuario =  DB::select("SELECT id, name FROM ophthalmologists where name ='$request->name' OR phone = '$request->name' OR email = '$request->name'");
         
         if(count($usuario) > 0){
-            $usuario2 = DB::select("SELECT id, nombre FROM users where nombre ='$request->nombre' OR telefono = '$request->nombre' OR correo = '$request->nombre'AND contrasena = '$pass'");
+            $usuario2 = DB::select("SELECT id, name FROM ophthalmologists where name ='$request->name' OR phone = '$request->name' OR email = '$request->name'AND password = '$pass'");
             if(count($usuario2) > 0){
                 return response()->json($usuario2, 200);
             }else{

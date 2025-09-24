@@ -110,40 +110,61 @@ class ProductController extends Controller
      * PUT/PATCH /api/products/{id}
      * Actualizar (validación flexible + SN único ignorando el propio)
      */
-    public function update(Request $request, $id)
+     public function update(Request $request, $id)
     {
-        $product = Product::where('id', $id)->first();
+        $product = Product::whereNull('deleted_at')->find($id);
         if (!$product) {
             return response()->json(['message' => 'Producto no encontrado'], 404);
         }
 
-        $data = $request->validate([
-            'name'       => 'sometimes|required|string|max:255',
-            'category'   => 'sometimes|nullable|string|max:100',
-            'brand'      => 'sometimes|nullable|string|max:100',
-            'price'      => 'sometimes|required|numeric|min:0',
-            'stock'      => 'sometimes|required|integer|min:0',
-            'date_added' => 'sometimes|nullable|date',
-            'SN'         => [
-                'sometimes','nullable','string','max:100',
-                Rule::unique('products','SN')->ignore($id)->whereNull('deleted_at'),
+        // Normalización básica
+        $input = $request->all();
+        foreach (['name','SN'] as $k) {
+            if (array_key_exists($k, $input) && is_string($input[$k])) {
+                $input[$k] = trim($input[$k]);
+            }
+        }
+        if (isset($input['price']) && $input['price'] !== '') {
+            $input['price'] = number_format((float)$input['price'], 2, '.', '');
+        }
+        if (isset($input['stock']) && $input['stock'] !== '') {
+            $input['stock'] = (int)$input['stock'];
+        }
+        if (!empty($input['date_added'])) {
+            try { $input['date_added'] = Carbon::parse($input['date_added'])->format('Y-m-d'); } catch (\Throwable $e) {}
+        }
+        $request->replace($input);
+
+        // Validación flexible
+        $validated = $request->validate([
+            'name'        => 'sometimes|required|string|max:255',
+            'category'    => 'sometimes|required|integer|exists:categoria,id',
+            'brand'       => 'sometimes|required|integer|exists:brand,id',
+            'price'       => 'sometimes|required|numeric|min:0',
+            'stock'       => 'sometimes|required|integer|min:0',
+            'date_added'  => 'sometimes|nullable|date',
+            'SN'          => [
+                'sometimes','required',
+                Rule::unique('products','SN')
+                    ->ignore($product->id, 'id')
+                    ->whereNull('deleted_at'),
             ],
         ]);
 
-        $product->fill($data);
-
-        if (!$product->isDirty()) {
+        if (empty($validated)) {
             return response()->json([
-                'message' => 'No hay cambios para actualizar',
-                'data'    => $product,
-            ], 200);
+                'message' => 'No enviaste campos para actualizar',
+                'data'    => $product
+            ], 422);
         }
 
-        $product->save();
+        // Actualizar SIEMPRE cuando hay campos válidos
+        $product->update($validated);   // esto también actualiza updated_at
+        $product->refresh();
 
         return response()->json([
             'message' => 'Producto actualizado correctamente',
-            'data'    => $product->fresh(),
+            'data'    => $product,
         ], 200);
     }
 
@@ -207,16 +228,17 @@ class ProductController extends Controller
         return response()->json($usuarios, 200);
     }
     public function showProduct($id)
-        {
-            // Solo clientes que NO están eliminados (deleted_at = null)
-            $o = Product::whereNull('deleted_at')->find($id);
+    {
+        // Solo clientes que NO están eliminados (deleted_at = null)
+        $o = Product::whereNull('deleted_at')->find($id);
 
-            if (!$o) {
-                return response()->json(['message' => 'No encontrado'], 404);
-            }
-
-            return response()->json($o, 200);
+        if (!$o) {
+            return response()->json(['message' => 'No encontrado'], 404);
         }
+
+        return response()->json($o, 200);
+    }
+    
 
     
 }

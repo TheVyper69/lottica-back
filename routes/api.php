@@ -40,12 +40,6 @@ Route::get('showCategoria', [ProductController::class, 'showCategoria']);
 Route::get('allProducts', [ProductController::class, 'allProducts']);
 Route::delete('deleteProduct/{id}', [ProductController::class, 'destroy']);
 Route::get('showProduct/{id}',   [ProductController::class, 'showProduct']);
-
-
-
-
-
-
-
+Route::post('updateProduct/{id}', [ProductController::class, 'update']);
 
 
