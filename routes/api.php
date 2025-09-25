@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ClientsController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\MedicalHistoryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -41,5 +42,10 @@ Route::get('allProducts', [ProductController::class, 'allProducts']);
 Route::delete('deleteProduct/{id}', [ProductController::class, 'destroy']);
 Route::get('showProduct/{id}',   [ProductController::class, 'showProduct']);
 Route::post('updateProduct/{id}', [ProductController::class, 'update']);
+
+//medicalhistory
+
+Route::post('/registroHistory', [MedicalHistoryController::class, 'store']);
+
 
 
