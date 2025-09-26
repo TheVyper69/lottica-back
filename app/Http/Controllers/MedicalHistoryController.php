@@ -6,6 +6,7 @@ use App\Models\MedicalHistory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Arr;
 
 class MedicalHistoryController extends Controller
 {
