@@ -46,6 +46,8 @@ Route::post('updateProduct/{id}', [ProductController::class, 'update']);
 //medicalhistory
 
 Route::post('/registroHistory', [MedicalHistoryController::class, 'store']);
+Route::get('/medicalHistory/{clientId}', [MedicalHistoryController::class, 'getMedicalHistoryWithRelations']);
+
 
 
 
